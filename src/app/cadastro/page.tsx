@@ -29,9 +29,11 @@ import { cn } from "@/lib/utils";
 import { FirebaseError } from "firebase/app";
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { usePathname, useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale";
+import Navbar from "@/components/navabr";
+import Link from "next/link";
 
 
 function Cadastro() {
@@ -40,11 +42,27 @@ function Cadastro() {
   const router = useRouter();
   const [date, setDate] = React.useState<Date>()
 
+  const [tituloEleitor, setTituloEleitor] = useState('');
+
+  const handleTituloChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+    const formattedValue = value
+      .replace(/(\d{4})(\d)/, '$1 $2') // Adds a space after the first 4 digits
+      .replace(/(\d{4}) (\d{4})(\d)/, '$1 $2 $3') // Adds a space after the second set of 4 digits
+      .slice(0, 14); // Restrict to 14 characters (including spaces)
+    setTituloEleitor(formattedValue);
+  };
+
 
   usePathname();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#050506]">
+
+
+    <main className="flex min-h-screen flex-col items-center justify-center px-24 py-0 bg-[#050506]">
+
+     <Navbar/>
+
       <Card className="w-[530px] bg-[#050506] border border-[#27272A]">
         <CardHeader>
           <CardTitle className="font-bold text-white text-[20px]">
@@ -78,8 +96,8 @@ function Cadastro() {
                 </label>
                 <input
                   id="pass"
-                  placeholder="Sua senha"
-                  type="password"
+                  placeholder="Email"
+                  type="email"
                   // value={password}
                   // onChange={(e) => setPassword(e.target.value)}
                   required
@@ -120,13 +138,13 @@ function Cadastro() {
                   Titulo de eleitor
                 </label>
                 <input
-                  id="email"
-                  placeholder="Seu email"
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
+                  id="titulo"
+                  placeholder="Titulo de eleitor"
+                  value={tituloEleitor}
+                  onChange={handleTituloChange}
                   required
-                  type="email"
-                  className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
+                  type="text"
+                  className="px-3 py-2 text-sm text-white bg-[#050506] border border-[#27272A] rounded-[5px] placeholder-[#434343]"
                 />
               </div>
 
@@ -139,6 +157,7 @@ function Cadastro() {
                     <SelectValue placeholder="Selecione o bairro" />
                   </SelectTrigger>
                   <SelectContent position="popper">
+                    <SelectItem value="Selecione o bairro">Selecione o bairro</SelectItem>
                     <SelectItem value="Valentina">Valentina</SelectItem>
                     <SelectItem value="Geisel">Geisel</SelectItem>
                     <SelectItem value="Bessa">Bessa</SelectItem>

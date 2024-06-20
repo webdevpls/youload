@@ -110,7 +110,7 @@ function SignIn() {
             <div>
                 <Accordion type="single" collapsible className="w-[530px] mt-[100px]">
                     <AccordionItem value="item-1">
-                        <AccordionTrigger className="font-light text-white">Não sei qual é meu usuário e nem minha senha, o que faço?</AccordionTrigger>
+                        <AccordionTrigger className="font-light text-white">Não sei qual é meu usuário e senha, o que faço?</AccordionTrigger>
                         <AccordionContent className=" w-[450px] text-[#3f3f44]">
                             Caso não saiba a sua senha ou usuário, entre em contato Conosco
                             ou diretamente com Euripedes Leal
