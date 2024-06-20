@@ -34,6 +34,10 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale";
 import Navbar from "@/components/navabr";
 import Link from "next/link";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
+import { DialogCerteza } from "@/components/dialogCerteza";
+
 
 
 function Cadastro() {
@@ -106,31 +110,19 @@ function Cadastro() {
               </div>
 
               <div className="flex flex-col space-y-1.5">
-                <label htmlFor="email" className="font-bold text-white">
+                <label htmlFor="data" className="font-bold text-white">
                   Data de nascimento
                 </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal bg-[#050506] border border-[#27272A] text-white",
-                        !date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4 text-[#434343]" />
-                      {date ? format(date, "P", { locale: ptBR }) : <span className="text-[#434343]">Escolha a data</span>}
-                      </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0  " align="start">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <input
+                  id="data"
+                  placeholder="Data de nascimento"
+                  type="date"
+                  // value={password}
+                  // onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
+                />
+                
               </div>
 
               <div className="flex flex-col space-y-1.5">
@@ -146,6 +138,7 @@ function Cadastro() {
                   type="text"
                   className="px-3 py-2 text-sm text-white bg-[#050506] border border-[#27272A] rounded-[5px] placeholder-[#434343]"
                 />
+
               </div>
 
               <div className="flex flex-col space-y-1.5">
@@ -186,16 +179,7 @@ function Cadastro() {
             </div>
             {/* )} */}
             <CardFooter className="flex justify-center mt-5 p-0">
-              <Button
-                type="submit"
-                className="bg-white text-[#434343] w-full rounded flex items-center justify-center hover:bg-slate-200"
-              >
-                {/* {loading ? ( */}
-                <div className="spinner-border animate-spin inline-block w-4 h-4 border-4 rounded-full border-t-transparent"></div>
-                {/* ) : ( */}
-                Cadastrar
-                {/* )} */}
-              </Button>
+              <DialogCerteza/>
             </CardFooter>
           </form>
         </CardContent>

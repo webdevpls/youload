@@ -7,6 +7,8 @@ import signIn from '@/firebase/auth/signIn'
 import { FirebaseError } from 'firebase/app'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 function SignIn() {
     const [email, setEmail] = useState('')
@@ -14,6 +16,7 @@ function SignIn() {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const router = useRouter()
 
     usePathname();
@@ -74,15 +77,22 @@ function SignIn() {
                             </div>
                             <div className="flex flex-col space-y-1.5">
                                 <label htmlFor="password" className="font-bold text-white">Senha</label>
-                                <input 
-                                    id="pass" 
-                                    placeholder="Sua senha" 
-                                    type='password' 
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required 
-                                    className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
-                                />
+                                <div className="relative">
+                                    <input 
+                                        id="pass" 
+                                        placeholder="Sua senha" 
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required 
+                                        className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343] w-full"
+                                    />
+                                    <FontAwesomeIcon
+                                        icon={showPassword ? faEyeSlash : faEye}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#434343] cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                                </div>
                             </div>
                         </div>
                         {errorMessage && (

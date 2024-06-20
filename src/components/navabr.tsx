@@ -29,7 +29,7 @@ function Navbar() {
             Cadastrados
           </Link>
         </li>
-       <Button className='w-24 bg-white text-[#050506]' onClick={() => logout()}>
+       <Button className='w-24 bg-white text-[#050506] hover:bg-slate-200' onClick={() => logout()}>
           Sair           
         </Button>
       </ul>
