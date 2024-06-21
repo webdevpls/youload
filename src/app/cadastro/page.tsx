@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Navbar from "@/components/navabr";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,43 +20,44 @@ function Cadastro() {
   const router = useRouter();
   usePathname();
 
-  const [pessoa, setPessoa] = useState<Pessoa>({
-    nome: "",
-    email: "",
-    dataNascimento: "",
-    tituloEleitor: "",
-    bairro: "",
-  });
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [tituloEleitor, setTituloEleitor] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [formComplete, setFormComplete] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setPessoa({ ...pessoa, [name]: value });
+  useEffect(() => {
+    // Verifica se todos os campos obrigatórios estão preenchidos
+    if (nome && email && tituloEleitor && dataNascimento) {
+      setFormComplete(true);
+    } else {
+      setFormComplete(false);
+    }
+  }, [nome, email, tituloEleitor, dataNascimento]);
+
+  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Dados do formulário:");
+    console.log("Nome:", nome);
+    console.log("Email:", email);
+    console.log("Data de Nascimento:", dataNascimento);
+    console.log("Título de Eleitor:", tituloEleitor);
+
+    // Aqui você pode enviar os dados para onde precisar (por exemplo, API, armazenamento local, etc.)
+    // Após enviar os dados, navegue para a página de listagem ou faça qualquer outra ação necessária
+
+    // Exemplo de navegação usando useRouter
+    // router.push("/cadastrados"); // Substitua com a rota para sua página de cadastrados
   };
 
-  const handleTituloChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTituloEleitorChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
     const formattedValue = value
       .replace(/(\d{4})(\d)/, "$1 $2") // Adds a space after the first 4 digits
       .replace(/(\d{4}) (\d{4})(\d)/, "$1 $2 $3") // Adds a space after the second set of 4 digits
       .slice(0, 14); // Restrict to 14 characters (including spaces)
-    setPessoa({ ...pessoa, tituloEleitor: formattedValue });
+    setTituloEleitor(formattedValue);
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Simulação de envio de dados
-    // Aqui você pode enviar os dados para onde precisar (por exemplo, API, armazenamento local, etc.)
-    // Após enviar os dados, navegue para a página de listagem
-      
-  };
-
-  const handleConfirmCadastro = () => {
-    // Lógica para confirmar o cadastro
-    // Exemplo de redirecionamento para a página de listagem após o cadastro
-    router.push("/cadastrados");
-  };
-
-  
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-24 py-0 bg-[#050506]">
@@ -68,7 +69,7 @@ function Cadastro() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleFormSubmit}>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <label htmlFor="nome" className="font-bold text-white">
@@ -78,8 +79,8 @@ function Cadastro() {
                   id="nome"
                   name="nome"
                   placeholder="Nome"
-                  value={pessoa.nome}
-                  onChange={handleInputChange}
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                   required
                   className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
                 />
@@ -93,8 +94,8 @@ function Cadastro() {
                   name="email"
                   placeholder="Email"
                   type="email"
-                  value={pessoa.email}
-                  onChange={handleInputChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
                 />
@@ -111,8 +112,8 @@ function Cadastro() {
                   name="dataNascimento"
                   placeholder="Data de nascimento"
                   type="date"
-                  value={pessoa.dataNascimento}
-                  onChange={handleInputChange}
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
                   required
                   className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
                 />
@@ -125,8 +126,8 @@ function Cadastro() {
                   id="tituloEleitor"
                   name="tituloEleitor"
                   placeholder="Título de eleitor"
-                  value={pessoa.tituloEleitor}
-                  onChange={handleTituloChange}
+                  value={tituloEleitor}
+                  onChange={handleTituloEleitorChange}
                   required
                   type="text"
                   className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343]"
@@ -153,7 +154,8 @@ function Cadastro() {
                 <DialogTrigger asChild>
                   <Button
                     type="submit"
-                    className="bg-white text-[#434343] w-full rounded flex items-center justify-center hover:bg-slate-200"
+                    className="bg-white text-[#434343] w-full rounded-[5px] flex items-center justify-center hover:bg-slate-200"
+                    disabled={!formComplete}
                   >
                     Cadastrar
                   </Button>
@@ -171,29 +173,24 @@ function Cadastro() {
                   <DialogFooter>
                     <DialogClose>
                       <Button
-                        type="submit"
+                        type="button"
                         className="bg-[#050506] border border-[#27272A] text-white rounded flex items-center justify-center hover:bg-[#000000]"
                       >
                         Cancelar
                       </Button>
                     </DialogClose>
                     <DialogClose>
-                    <Button
-                      type="submit"
-                      className="bg-white text-[#434343] rounded flex items-center justify-center hover:bg-slate-200"
-                      onClick={handleConfirmCadastro}
-
-                    >
-                      Tenho certeza
-                    </Button>
+                      <Button
+                        type="submit"
+                        className="bg-white text-[#434343] rounded flex items-center justify-center hover:bg-slate-200"
+                      >
+                        Tenho certeza
+                      </Button>
                     </DialogClose>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </CardFooter>
-            <button type="submit" className="hidden">
-              Submit
-            </button>
           </form>
         </CardContent>
       </Card>
