@@ -1,129 +1,82 @@
-'use client'
+'use client'; // Indica que este é um componente Client Component (Next.js 13)
 
-import { usePathname } from "next/navigation";
-import { Table, TableBody, TableHeader, TableHead, TableRow, TableCell } from "@/components/ui/table";
-import React, { useEffect, useState } from "react";
-import Navbar from "@/components/navabr";
+import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation'; // Para obter o pathname da página atual
+import { Table, TableBody, TableHeader, TableHead, TableRow, TableCell } from '@/components/ui/table'; // Componentes da tabela
+// import Navbar from '@/components/navbar'; // Componente de navegação
 
+// Interface para definir a estrutura dos dados de uma pessoa
 interface Pessoa {
+  id: number; 
   nome: string;
   email: string;
-  dataNascimento: string;
+  dataNascimento: string; // Data no formato ISO (YYYY-MM-DD)
   tituloEleitor: string;
   bairro: string;
 }
 
 function Cadastrados() {
-  const pathname = usePathname();
-  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
+  const pathname = usePathname(); // Obtém o pathname da página atual (não usado neste exemplo)
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]); // Estado para armazenar a lista de pessoas
+  const [isLoading, setIsLoading] = useState(true); // Estado para indicar se os dados estão sendo carregados
+  const [errorMessage, setErrorMessage] = useState(''); // Estado para armazenar mensagens de erro
 
-  useEffect(() => {
-    // Dados fictícios para simular o carregamento de pessoas
-    const dadosIniciais: Pessoa[] = [
-      {
-        nome: "João Silva",
-        email: "joao.silva@example.com",
-        dataNascimento: "1990-05-15",
-        tituloEleitor: "1234 5678 9012",
-        bairro: "Valentina"
-      },
-      {
-        nome: "Maria Souza",
-        email: "maria.souza@example.com",
-        dataNascimento: "1985-08-25",
-        tituloEleitor: "9876 5432 1098",
-        bairro: "Geisel"
-      },
-      {
-        nome: "Carlos Santos",
-        email: "carlos.santos@example.com",
-        dataNascimento: "1978-03-10",
-        tituloEleitor: "4567 8901 2345",
-        bairro: "Mangabeira"
-      },
-      {
-        nome: "Ana Oliveira",
-        email: "ana.oliveira@example.com",
-        dataNascimento: "1995-11-20",
-        tituloEleitor: "3210 9876 5432",
-        bairro: "Bessa"
-      },
-      {
-        nome: "Pedro Pereira",
-        email: "pedro.pereira@example.com",
-        dataNascimento: "1982-07-18",
-        tituloEleitor: "7890 1234 5678",
-        bairro: "Centro"
-      },
-      {
-        nome: "Fernanda Costa",
-        email: "fernanda.costa@example.com",
-        dataNascimento: "1993-02-28",
-        tituloEleitor: "2345 6789 0123",
-        bairro: "Manaíra"
+  useEffect(() => { // Efeito colateral que será executado quando o componente for montado
+    async function fetchPessoas() { // Função assíncrona para buscar os dados
+      try {
+        const response = await fetch('/api/route', { method: 'GET' }); 
+        if (response.ok) { // Verifica se a requisição foi bem-sucedida
+          const data = await response.json(); // Converte a resposta para JSON
+          setPessoas(data); // Atualiza o estado com os dados recebidos
+        } else {
+          setErrorMessage('Erro ao buscar pessoas cadastradas'); // Define a mensagem de erro
+        }
+      } catch (error) {
+        setErrorMessage('Erro ao buscar pessoas cadastradas'); // Define a mensagem de erro em caso de falha na requisição
+      } finally {
+        setIsLoading(false); // Indica que o carregamento terminou
       }
-    ];
+    }
 
-    // Definindo os dados no estado
-    setPessoas(dadosIniciais);
-  }, []);
+    fetchPessoas(); // Chama a função para buscar os dados
+  }, []); // O array vazio indica que o efeito será executado apenas uma vez, quando o componente for montado
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-24 py-0 bg-[#050506]">
-      <Navbar />
-      <div className="flex items-center justify-between py-4">
-        <form action="" className="flex items-center gap-2">
-          <input
-            id="nome"
-            placeholder="Pesquise por nome"
-            className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343] w-[520px]"
-          />
-          <input
-            id="titulo"
-            placeholder="Pesquise por Título de eleitor"
-            className="bg-[#050506] border border-[#27272A] rounded-[5px] px-3 py-2 text-sm text-white placeholder-[#434343] w-[520px]"
-          />
-          <button
-            className="w-[200px] h-9 rounded-sm bg-white text-[#050506]"
-            type="button"
-          >
-            Buscar resultados
-          </button>
-        </form>
-      </div>
-      <div className="py-20">
-        <Table className="w-[1260px]">
-          <TableHeader className="rounded-md">
-            <TableRow className="border-b border-b-[#27272A] bg-[#050506] hover:bg-text-neutral-600">
-              <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">
-                Nome
-              </TableHead>
-              <TableHead className="text-neutral-600 w-[250px] font-bold whitespace-nowrap">
-                Email
-              </TableHead>
-              <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">
-                Data de nascimento
-              </TableHead>
-              <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">
-                Título de eleitor
-              </TableHead>
-              <TableHead className="text-right text-neutral-600 w-[150px] font-bold whitespace-nowrap">
-                Bairro
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {pessoas.map((pessoa, index) => (
-              <TableRow key={index} className="text-white bg-[#050506] hover:bg-[#0f0f12] rounded-md border-b border-b-[#27272A]">
-                <TableCell className="font-medium">{pessoa.nome}</TableCell>
-                <TableCell>{pessoa.email}</TableCell>
-                <TableCell>{pessoa.dataNascimento}</TableCell>
-                <TableCell>{pessoa.tituloEleitor}</TableCell>
-                <TableCell className="text-right">{pessoa.bairro}</TableCell>
+      {/* <Navbar /> Renderiza o componente de navegação */}
+
+      {/* ... (código dos filtros de busca) ... */}
+
+      <div className="py-20"> {/* Espaçamento */}
+        {isLoading ? ( // Se estiver carregando, exibe a mensagem "Carregando..."
+          <p>Carregando...</p> 
+        ) : errorMessage ? ( // Se houver um erro, exibe a mensagem de erro
+          <p className="text-red-500">{errorMessage}</p> 
+        ) : ( // Se não estiver carregando e não houver erro, exibe a tabela
+          <Table className="w-[1260px]">
+            <TableHeader className="rounded-md">
+              <TableRow className="border-b border-b-[#27272A] bg-[#050506] hover:bg-text-neutral-600">
+                {/* Cabeçalho da tabela */}
+                <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">Nome</TableHead>
+                <TableHead className="text-neutral-600 w-[250px] font-bold whitespace-nowrap">Email</TableHead>
+                <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">Data de nascimento</TableHead>
+                <TableHead className="text-neutral-600 w-[200px] font-bold whitespace-nowrap">Título de eleitor</TableHead>
+                <TableHead className="text-right text-neutral-600 w-[150px] font-bold whitespace-nowrap">Bairro</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {pessoas.map((pessoa) => ( // Mapeia a lista de pessoas para criar as linhas da tabela
+                <TableRow key={pessoa.id} className="text-white bg-[#050506] hover:bg-[#0f0f12] rounded-md border-b border-b-[#27272A]">
+                  <TableCell className="font-medium">{pessoa.nome}</TableCell>
+                  <TableCell>{pessoa.email}</TableCell>
+                  <TableCell>{pessoa.dataNascimento}</TableCell>
+                  <TableCell>{pessoa.tituloEleitor}</TableCell>
+                  <TableCell className="text-right">{pessoa.bairro}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </main>
   );
